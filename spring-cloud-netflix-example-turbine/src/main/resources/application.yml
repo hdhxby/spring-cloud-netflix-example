@@ -1,0 +1,24 @@
+server:
+    port: ${random.int(8081,9999)}
+
+spring:
+    profiles:
+        include:
+            - eureka
+    application:
+        name: turbine
+    cloud:
+        config:
+            label: main
+            profile: dev
+
+hystrix: # org.springframework.cloud.netflix.hystrix.dashboard.HystrixDashboardProperties
+    dashboard:
+        proxy-stream-allow-list: "*"
+
+turbine: # org.springframework.cloud.netflix.turbine.TurbineProperties
+    appConfig: hello, world
+    clusterNameExpression: "'default'"
+    combine-host-port: true
+    aggregator: # org.springframework.cloud.netflix.turbine..TurbineAggregatorProperties
+        clusterConfig: default

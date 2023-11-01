@@ -1,0 +1,27 @@
+eureka: # 注册中心 EurekaServerBootstrap初始化时会获取environment,data-center对应的值
+    environment: dev # 页面上显示的environment
+    data-center: dev # 页面上显示的data-center
+    instance: # 服务实例配置 EurekaInstanceConfigBean
+        leaseRenewalIntervalInSeconds: 30 # 续约间隔
+        leaseExpirationDurationInSeconds: 90 # 租约到期时间,eureka 续约时wrong,实际会*2,180S
+        preferIpAddress: true
+    client: # 客户端配置 EurekaClientConfigBean
+        fetch-registry: true # 拉取注册表
+        registry-fetch-interval-seconds: 30 # 拉取注册表间隔
+        register-with-eureka: true # 注册
+#        should-enforce-registration-at-init: true # 初始化时注册,默认false
+        initialInstanceInfoReplicationIntervalSeconds: 40 # 初始化实例信息复制(秒)
+        instanceInfoReplicationIntervalSeconds: 30 # 实例信息复制(秒)
+        service-url: # 注册中心url
+            defaultZone: http://eureka:8761/eureka/ # 默认区
+    server: # 服务端配置 EurekaServerConfigBean
+        enableSelfPreservation: false # 关闭自我保护,服务实例续约与期待客户端续约间隔不一致将导致错误
+        expectedClientRenewalIntervalSeconds: 30 # 期待客户端续约间隔(秒)
+        evictionIntervalTimerInMs: 60000 # 摘除间隔(毫秒)
+        useReadOnlyResponseCache: false # 关闭只读响应缓存
+        renewalPercentThreshold: 0.85 # 续约阈值(百分比)
+        responseCacheUpdateIntervalMs: 30000 # 响应缓存更新间隔(毫秒)
+        responseCacheAutoExpirationInSeconds: 180 # 响应缓存自动超时时间(秒)
+        deltaRetentionTimerIntervalInMs: 30000 # 增量保留间隔（毫秒）
+        retentionTimeInMSInDeltaQueue: 180000 # 增量队列中的保留时间(毫秒)
+        peerEurekaNodesUpdateIntervalMs: 600000 # 节点更新间隔(毫秒)

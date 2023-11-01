@@ -1,0 +1,11 @@
+server:
+    port: 9999
+spring:
+  application:
+    name: uaa
+  #  mvc: # org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties
+#    static-path-pattern: /**
+#  resources: # org.springframework.boot.autoconfigure.web.ResourceProperties
+#    static-locations: "classpath:/META-INF/resources/", "classpath:/resources/", "classpath:/static/", "classpath:/public/"
+  thymeleaf: # org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties
+    cache: false

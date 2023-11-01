@@ -1,0 +1,27 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: zuul
+zuul: # ZuulProperties
+  debug:
+    request: true # 是否debug @see DynamicPropertyFactory
+    parameter: debug # 请求url中的debug标志 @see DynamicPropertyFactory
+  include-debug-header: true # SendResponseFilter会用到
+  ribbon:
+    eager-load:
+      enabled: false # 预加载, 会初始化ZuulRouteApplicationContextInitializer
+  retryable: true # 重试
+#  prefix: api # 默认false, DiscoveryClientRouteLocator生成route的时候会添加此前缀
+#  stripPrefix: true # 默认true, DiscoveryClientRouteLocator生成route时strip前缀
+  routes: # 路由 Map<String, ZuulRoute> SimpleRouteLocator会使用此配置
+    hello:
+      path: /api/hello/**
+      serviceId: hello
+      stripPrefix: false
+    world:
+      path: /api/world/**
+      serviceId: world
+      stripPrefix: false

@@ -1,0 +1,19 @@
+eureka: # 注册中心
+    environment: dev # 页面上显示的environment
+    data-center: dev # 页面上显示的data-center
+    instance: # 服务实例
+        hostname: peer1 # hostName,必须与defaultZone不同
+        lease-renewal-interval-in-seconds: 30 # 续约间隔
+        lease-expiration-duration-in-seconds: 90 # 租约到期时间
+    client: # 客户端
+        fetch-registry: true # 拉取注册表
+        register-with-eureka: true # 注册
+        registry-fetch-interval-seconds: 30 # 拉取注册表间隔
+        service-url: # 注册中心url
+            defaultZone: http://peer2:8762/eureka/ # 默认区
+    server: # 服务端
+        enable-self-preservation: false #关闭自我保护
+        response-cache-update-interval-ms: 30000 # 更新缓存
+        eviction-interval-timer-in-ms: 60000 #
+        renewal-percent-threshold: 0.85 #
+

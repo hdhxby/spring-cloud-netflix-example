@@ -35,9 +35,10 @@ public class UaaWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 //                .sessionManagement(sessionManaement -> sessionManaement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .antMatchers("/").permitAll()
-                        .antMatchers("/oauth/**").permitAll()
+                        .antMatchers("/index").permitAll()
                         .antMatchers("/login","/logout").permitAll()
-//                        .antMatchers("/index").permitAll()
+                        .antMatchers("/oauth/**").permitAll()
+                        .antMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 .formLogin()

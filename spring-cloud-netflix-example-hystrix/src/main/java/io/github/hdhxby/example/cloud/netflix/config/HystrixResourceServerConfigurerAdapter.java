@@ -29,7 +29,7 @@ public class HystrixResourceServerConfigurerAdapter extends ResourceServerConfig
     @Bean
     public ResourceServerTokenServices tokenService() {
         RemoteTokenServices service=new RemoteTokenServices();
-        service.setCheckTokenEndpointUrl("http://uaa/oauth/check_token");
+        service.setCheckTokenEndpointUrl("http://localhost:9999/oauth/check_token");
         service.setClientId("hystrix");
         service.setClientSecret("secret");
         return service;

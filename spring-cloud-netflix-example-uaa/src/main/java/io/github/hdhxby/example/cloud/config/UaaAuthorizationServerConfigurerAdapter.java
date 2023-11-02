@@ -45,14 +45,14 @@ public class UaaAuthorizationServerConfigurerAdapter extends AuthorizationServer
                 .inMemory()
                 .withClient("uaa")
                 .secret("secret")
-                .autoApprove(false)
+                .autoApprove(false) // 自动批准
                 .redirectUris("http://127.0.0.1:8080/uaa/api/authorization_code") //重定向uri
                 .scopes("all")
                 .authorizedGrantTypes("authorization_code", "implicit", "client_credentials", "password", "refresh_token")
                 .and()
                 .withClient("hystrix")
-                .secret(passwordEncoder.encode("security"))
-                .autoApprove(false)
+                .secret("secret")
+                .autoApprove(true) // 自动批准
                 .redirectUris("http://127.0.0.1:8080/hystrix/api/authorization_code") //重定向uri
                 .scopes("all")
                 .authorizedGrantTypes("authorization_code", "implicit", "client_credentials", "password", "refresh_token");

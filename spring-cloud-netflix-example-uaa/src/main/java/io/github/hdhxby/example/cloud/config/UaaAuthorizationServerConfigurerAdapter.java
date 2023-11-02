@@ -15,10 +15,13 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.code.InMemoryAuthorizationCodeServices;
+
+import java.util.List;
 
 @Configuration
 @EnableAuthorizationServer
@@ -40,20 +43,19 @@ public class UaaAuthorizationServerConfigurerAdapter extends AuthorizationServer
 //        clients.withClientDetails()
         clients
                 .inMemory()
-                .withClient("hello")
+                .withClient("uaa")
                 .secret("secret")
                 .autoApprove(false)
                 .redirectUris("http://127.0.0.1:8080/uaa/api/authorization_code") //重定向uri
                 .scopes("all")
                 .authorizedGrantTypes("authorization_code", "implicit", "client_credentials", "password", "refresh_token")
                 .and()
-                .withClient("world")
+                .withClient("hystrix")
                 .secret(passwordEncoder.encode("security"))
                 .autoApprove(false)
-                .redirectUris("http://127.0.0.1:8080/uaa/api/authorization_code") //重定向uri
+                .redirectUris("http://127.0.0.1:8080/hystrix/api/authorization_code") //重定向uri
                 .scopes("all")
-                .authorizedGrantTypes("authorization_code", "implicit", "client_credentials", "password", "refresh_token")
-                ;
+                .authorizedGrantTypes("authorization_code", "implicit", "client_credentials", "password", "refresh_token");
     }
 
     @Override
@@ -74,6 +76,30 @@ public class UaaAuthorizationServerConfigurerAdapter extends AuthorizationServer
                 .allowedTokenEndpointRequestMethods(HttpMethod.POST);
     }
 
+
+    @Bean
+    public AuthorizationCodeServices authorizationCodeServices() {
+        return new InMemoryAuthorizationCodeServices();
+    }
+
+
+    @Bean
+    public AuthorizationServerTokenServices tokenService() {
+        DefaultTokenServices service=new DefaultTokenServices();
+        service.setClientDetailsService(clientDetailsService);//客户端详情服务
+        service.setSupportRefreshToken(true);//支持刷新令牌
+        service.setAccessTokenValiditySeconds(7200); // 令牌默认有效期2小时
+        service.setRefreshTokenValiditySeconds(259200); // 刷新令牌默认有效期3天
+
+        service.setTokenStore(jwtTokenStore());//令牌存储策略
+//        // JWT需要设置Token解码器
+//        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+//        tokenEnhancerChain.setTokenEnhancers(List.of(jwtAccessTokenConverter()));
+//        service.setTokenEnhancer(tokenEnhancerChain);
+
+        return service;
+    }
+
     @Bean
     public TokenStore jwtTokenStore() {
         return new InMemoryTokenStore();//JwtTokenStore(jwtAccessTokenConverter());
@@ -84,29 +110,6 @@ public class UaaAuthorizationServerConfigurerAdapter extends AuthorizationServer
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
         jwtAccessTokenConverter.setSigningKey("uaa");
         return jwtAccessTokenConverter;
-    }
-
-    @Bean
-    public AuthorizationServerTokenServices tokenService() {
-        DefaultTokenServices service=new DefaultTokenServices();
-        service.setClientDetailsService(clientDetailsService);//客户端详情服务
-        service.setSupportRefreshToken(true);//支持刷新令牌
-        service.setTokenStore(jwtTokenStore());//令牌存储策略
-
-        service.setAccessTokenValiditySeconds(7200); // 令牌默认有效期2小时
-        service.setRefreshTokenValiditySeconds(259200); // 刷新令牌默认有效期3天
-
-
-//        TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-//        tokenEnhancerChain.setTokenEnhancers(List.of(jwtAccessTokenConverter()));
-//        service.setTokenEnhancer(tokenEnhancerChain);
-
-        return service;
-    }
-
-    @Bean
-    public AuthorizationCodeServices authorizationCodeServices() {
-        return new InMemoryAuthorizationCodeServices();
     }
 
 }

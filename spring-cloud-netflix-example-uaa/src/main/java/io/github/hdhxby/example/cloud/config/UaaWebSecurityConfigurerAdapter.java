@@ -23,11 +23,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class UaaWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        super.configure(auth);
-        auth
-                .inMemoryAuthentication()
-                .withUser("user").password(passwordEncoder().encode("password")).roles("USER").authorities("hello").and()
-                .withUser("admin").password(passwordEncoder().encode("password")).roles("USER", "ADMIN").authorities("hello","world");
+        super.configure(auth);
     }
 
     @Override
@@ -39,8 +35,8 @@ public class UaaWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 //                .sessionManagement(sessionManaement -> sessionManaement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         .antMatchers("/").permitAll()
+                        .antMatchers("/oauth/**").permitAll()
                         .antMatchers("/login","/logout").permitAll()
-//                        .antMatchers("/oauth/**").permitAll()
 //                        .antMatchers("/index").permitAll()
                         .anyRequest().permitAll()
                 )
@@ -49,52 +45,28 @@ public class UaaWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 //                .loginProcessingUrl("/login").permitAll()
                 .and()
                 .httpBasic();
-//                .and()
-//                .httpBasic()
-//                .successHandler(new AuthenticationSuccessHandler() {
-//                    @Override
-//                    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-//
-//                    }
-//                }).failureHandler(new AuthenticationFailureHandler() {
-//                    @Override
-//                    public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-//
-//                    }
-//                })
-//                .and()
-//                .oauth2Login()
-//                .and()
-//                .logout()
-//                .logoutSuccessHandler(new LogoutSuccessHandler() {
-//                    @Override
-//                    public void onLogoutSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-//
-//                    }
-//                })
-        ;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance(); //BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 
-//    @Bean
-//    @Override
-//    protected UserDetailsService userDetailsService() {
-//        InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-//        userDetailsManager.createUser(User.withUsername("user")
-//                .password("{noop}password")
-//                .roles("USER")
-//                .authorities("hello")
-//                .build());
-//        userDetailsManager.createUser(User.withUsername("admin")
-//                .password(passwordEncoder().encode("password"))
-//                .roles("ADMIN")
-//                .authorities("hello","world").build());
-//        return userDetailsManager;
-//    }
+    @Bean
+    @Override
+    protected UserDetailsService userDetailsService() {
+        InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+        userDetailsManager.createUser(User.withUsername("user")
+                .password("password")
+                .roles("USER")
+                .authorities("users")
+                .build());
+        userDetailsManager.createUser(User.withUsername("admin")
+                .password(passwordEncoder().encode("password"))
+                .authorities("users")
+                .roles("ADMIN").build());
+        return userDetailsManager;
+    }
 
     @Bean
     @Override

@@ -14,7 +14,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @version 2.0, 03/06/21
  * @since 2.0
  */
-@ConfigurationPropertiesScan
 @EnableFeignClients
 @EnableCircuitBreaker
 @EnableDiscoveryClient

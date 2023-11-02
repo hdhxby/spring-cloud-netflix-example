@@ -16,7 +16,6 @@
 
     <properties>
         <start-class>io.github.hdhxby.example.cloud.TurbineApplication</start-class>
-<!--        <spring-cloud-starter-turbine.version>1.4.7.RELEASE</spring-cloud-starter-turbine.version>-->
     </properties>
 
     <dependencies>

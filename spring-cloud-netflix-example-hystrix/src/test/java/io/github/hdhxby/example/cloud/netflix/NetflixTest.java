@@ -13,7 +13,6 @@ import com.netflix.hystrix.contrib.javanica.command.HystrixCommandBuilder;
 import com.netflix.loadbalancer.ILoadBalancer;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
-import com.netflix.zuul.http.ServletInputStreamWrapper;
 import feign.Client;
 import feign.Contract;
 import feign.Feign;
@@ -40,8 +39,6 @@ import org.springframework.cloud.netflix.ribbon.SpringClientFactory;
 import org.springframework.cloud.netflix.ribbon.apache.RibbonApacheHttpRequest;
 import org.springframework.cloud.netflix.ribbon.apache.RibbonLoadBalancingHttpClient;
 import org.springframework.cloud.netflix.ribbon.support.RibbonCommandContext;
-import org.springframework.cloud.netflix.zuul.filters.ZuulProperties;
-import org.springframework.cloud.netflix.zuul.filters.route.apache.HttpClientRibbonCommandFactory;
 import org.springframework.cloud.openfeign.FeignContext;
 import org.springframework.cloud.openfeign.ribbon.CachingSpringLoadBalancerFactory;
 import org.springframework.cloud.openfeign.ribbon.LoadBalancerFeignClient;
@@ -144,7 +141,7 @@ public class NetflixTest {
         ((RibbonLoadBalancingHttpClient) client).setLoadBalancer(loadBalancer);
 
         RibbonCommandContext context = new RibbonCommandContext(SERVICE_ID,"GET","/api/world?name=world",true,new HttpHeaders(),new LinkedMultiValueMap(),
-                new ServletInputStreamWrapper(null), new ArrayList<>(),-1l,null);
+                null, new ArrayList<>(),-1l,null);
         IResponse response = client.execute(new RibbonApacheHttpRequest(context)
                 .replaceUri(((RibbonLoadBalancingHttpClient) client).reconstructURIWithServer(
                         ((RibbonLoadBalancingHttpClient) client).getLoadBalancer()
@@ -268,28 +265,4 @@ public class NetflixTest {
         hystrixdClient.world("builder",0L);
     }
 
-    /**
-     * Eureka 负载均衡
-     * @throws Exception
-     */
-    @Test
-    public void testIClient1() throws Exception {
-        IClient client =  clientFactory.getClient(SERVICE_ID, IClient.class);
-        assertTrue(client instanceof RibbonLoadBalancingHttpClient);
-        ILoadBalancer loadBalancer = clientFactory.getLoadBalancer(SERVICE_ID);
-        ((RibbonLoadBalancingHttpClient) client).setLoadBalancer(loadBalancer);
-
-        RibbonCommandContext context = new RibbonCommandContext(SERVICE_ID,"GET","/api/world?name=world",true,new HttpHeaders(),new LinkedMultiValueMap(),
-                new ServletInputStreamWrapper(null), new ArrayList<>(),-1l,null);
-//        IResponse response = client.execute(new RibbonApacheHttpRequest(conte        IResponse response = client.execute(new RibbonApacheHttpRequest(context)
-//                .replaceUri(((RibbonLoadBalancingHttpClient) client).reconstructURIWithServer(
-//                        ((RibbonLoadBalancingHttpClient) client).getLoadBalancer()
-//                                .chooseServer(context.getServiceId()),
-//                        context.uri()))
-//                ,null);
-        ZuulProperties zuulProperties = new ZuulProperties();
-        HttpClientRibbonCommandFactory commandFactory = new HttpClientRibbonCommandFactory(clientFactory,zuulProperties);
-        ClientHttpResponse response = commandFactory.create(context).execute();
-//        assertEquals("hello world.", new String(response.getBody().readAllBytes())); // fixme jdk1.8兼容
-    }
 }
